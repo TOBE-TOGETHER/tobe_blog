@@ -1,10 +1,9 @@
 package com.tobe.blog.beans.dto.user;
 
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 @Data
 public class UserUpdateDTO {
@@ -35,4 +34,6 @@ public class UserUpdateDTO {
     private String photoImg;
     @Length(max = 2000)
     private String backgroundImg;
+    @NotNull
+    private UserFeatureDTO features;
 }

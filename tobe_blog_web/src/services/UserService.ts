@@ -20,6 +20,12 @@ export function createUser(data: { firstName: string | undefined; lastName: stri
   });
 }
 
+interface Features {
+  articleModule: boolean;
+  planModule: boolean;
+  vocabularyModule: boolean;
+}
+
 export function updateUser(data: {
   id: string | undefined;
   email: string | undefined;
@@ -34,6 +40,7 @@ export function updateUser(data: {
   profession: string | undefined;
   backgroundImg: string | undefined;
   photoImg: string | undefined;
+  features: Features | undefined;
 }): AxiosPromise {
   return server.put(`/${USER_URI}/${data.id}`, data, {
     headers: {

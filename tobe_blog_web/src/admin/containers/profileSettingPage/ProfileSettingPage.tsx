@@ -1,13 +1,14 @@
-import { Box, Divider, Grid, Paper, TextField } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import { ReactNode, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Page } from '../../../components/layout';
-import { useAuthDispatch, useAuthState } from '../../../contexts';
-import { ELocalStorageKeys } from '../../../global/enums.ts';
-import { UserService } from '../../../services';
-import { HalfRow, OneRow, QuarterRow, SaveButtonPanel } from '../../components';
+import {Box, Divider, FormControlLabel, FormGroup, Grid, Paper, TextField} from '@mui/material';
+import {useSnackbar} from 'notistack';
+import {ReactNode, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {Page} from '../../../components/layout';
+import {useAuthDispatch, useAuthState} from '../../../contexts';
+import {ELocalStorageKeys} from '../../../global/enums.ts';
+import {UserService} from '../../../services';
+import {HalfRow, OneRow, QuarterRow, SaveButtonPanel} from '../../components';
 import AvatarSelector from './AvatarSelector.tsx';
+import Switch from '@mui/material/Switch';
 
 export default function ProfileSettingPage() {
   const { t } = useTranslation();
@@ -29,6 +30,10 @@ export default function ProfileSettingPage() {
   const [backgroundImg, setBackgroundImg] = useState<string>(user.backgroundImg);
   const [photoImg, setPhotoImg] = useState<string>(user.photoImg);
 
+  const [articleModule, setArticleModule] = useState<boolean>(user.features.articleModule);
+  const [planModule, setPlanModule] = useState<boolean>(user.features.planModule);
+  const [vocabularyModule, setVocabularyModule] = useState<boolean>(user.features.vocabularyModule);
+
   const handleSubmit = () => {
     setOpenLoading(true);
     UserService.updateUser({
@@ -45,6 +50,11 @@ export default function ProfileSettingPage() {
       profession: profession,
       backgroundImg: backgroundImg,
       photoImg: photoImg,
+      features: {
+        articleModule: articleModule,
+        planModule: planModule,
+        vocabularyModule: vocabularyModule
+      },
     })
       .then(response => {
         dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
@@ -154,6 +164,35 @@ export default function ProfileSettingPage() {
               placeholder={t('profile-setting.fields.introduction-placeholder')}
             />
           </OneRow>
+        </InfoSection>
+        <Divider/>
+        <InfoSection>
+          <QuarterRow>
+            <FormControlLabel control={<Switch color="secondary"
+                                               checked={articleModule}
+                                               onChange={e => setArticleModule(e.target.checked)}/>}
+                              label={t('breadcrumbs.articles')}
+            />
+          </QuarterRow>
+          <QuarterRow>
+            <FormGroup>
+              <FormControlLabel control={<Switch color="secondary"
+                                                 checked={planModule}
+                                                 onChange={e => setPlanModule(e.target.checked)}/>}
+
+                                label={t('breadcrumbs.plans')}
+              />
+            </FormGroup>
+          </QuarterRow>
+          <QuarterRow>
+            <FormGroup>
+              <FormControlLabel control={<Switch color="secondary"
+                                                 checked={vocabularyModule}
+                                                 onChange={e => setVocabularyModule(e.target.checked)}/>}
+                                label={t('breadcrumbs.vocabularies')}
+              />
+            </FormGroup>
+          </QuarterRow>
         </InfoSection>
         <Divider />
         <InfoSection>

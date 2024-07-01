@@ -13,7 +13,6 @@ import com.tobe.blog.core.mapper.UserMapper;
 import com.tobe.blog.core.utils.BasicConverter;
 import com.tobe.blog.core.utils.CacheUtil;
 import com.tobe.blog.core.utils.GsonUtil;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -97,9 +96,7 @@ public class UserService extends ServiceImpl<UserMapper, UserEntity> {
         BeanUtils.copyProperties(dto, oriUserEntity);
         this.updateById(oriUserEntity);
         UserGeneralDTO result = BasicConverter.convert(oriUserEntity, UserGeneralDTO.class);
-        UserFeatureDTO featureDTO = userFeatureService
-                .getOneOpt(new LambdaQueryWrapper<UserFeatureEntity>().eq(UserFeatureEntity::getUserId, dto.getId()))
-                .map(e -> BasicConverter.convert(e, UserFeatureDTO.class)).orElse(null);
+        UserFeatureDTO featureDTO = updateFeature(dto.getFeatures(), dto.getId());
         result.setFeatures(featureDTO);
         return result;
     }
@@ -148,5 +145,15 @@ public class UserService extends ServiceImpl<UserMapper, UserEntity> {
         if (emailExist) {
             throw new TobeRuntimeException("The email has been registered, please login directly.");
         }
+    }
+
+    private UserFeatureDTO updateFeature(UserFeatureDTO dto, Long userId) {
+        UserFeatureEntity featureEntity = new UserFeatureEntity();
+        BeanUtils.copyProperties(dto, featureEntity);
+        featureEntity.setUserId(userId);
+        userFeatureService.saveOrUpdate(featureEntity);
+        return userFeatureService
+                .getOneOpt(new LambdaQueryWrapper<UserFeatureEntity>().eq(UserFeatureEntity::getUserId, userId))
+                .map(e -> BasicConverter.convert(e, UserFeatureDTO.class)).orElse(null);
     }
 }

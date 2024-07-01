@@ -1,5 +1,17 @@
 package com.tobe.blog.core.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.tobe.blog.DefaultTestData;
+import com.tobe.blog.DefaultTestData.DefaultUser;
+import com.tobe.blog.beans.consts.Const.Role;
+import com.tobe.blog.beans.dto.user.*;
+import com.tobe.blog.beans.entity.user.UserFeatureEntity;
+import com.tobe.blog.beans.entity.user.UserRoleEntity;
+import com.tobe.blog.core.exception.TobeRuntimeException;
+import com.tobe.blog.core.mapper.UserFeatureMapper;
+import com.tobe.blog.core.mapper.UserRoleMapper;
+import com.tobe.blog.core.utils.SecurityUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,23 +23,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.tobe.blog.DefaultTestData;
-import com.tobe.blog.DefaultTestData.DefaultUser;
-import com.tobe.blog.beans.consts.Const.Role;
-import com.tobe.blog.beans.dto.user.UserBriefProfileDTO;
-import com.tobe.blog.beans.dto.user.UserCreationDTO;
-import com.tobe.blog.beans.dto.user.UserFeatureDTO;
-import com.tobe.blog.beans.dto.user.UserFullProfileDTO;
-import com.tobe.blog.beans.dto.user.UserGeneralDTO;
-import com.tobe.blog.beans.dto.user.UserUpdateDTO;
-import com.tobe.blog.beans.entity.user.UserFeatureEntity;
-import com.tobe.blog.beans.entity.user.UserRoleEntity;
-import com.tobe.blog.core.exception.TobeRuntimeException;
-import com.tobe.blog.core.mapper.UserFeatureMapper;
-import com.tobe.blog.core.mapper.UserRoleMapper;
-import com.tobe.blog.core.utils.SecurityUtil;
+import static com.tobe.blog.DefaultTestData.DefaultUser.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -240,7 +236,11 @@ public class UserServiceTests {
         updateDTO.setPhotoImg(DefaultUser.PHOTO_IMG);
         updateDTO.setProfession(DefaultUser.PROFESSION);
         updateDTO.setUsername(DefaultUser.USERNAME);
-
+        UserFeatureDTO featureDTO = new UserFeatureDTO();
+        featureDTO.setArticleModule(ARTICLE_MODULE);
+        featureDTO.setPlanModule(PLAN_MODULE);
+        featureDTO.setVocabularyModule(VOCABULARY_MODULE);
+        updateDTO.setFeatures(featureDTO);
         // all fields should be update correctly
         UserGeneralDTO updatedUser = userService.updateUser(updateDTO);
         Assertions.assertEquals("user-updated@tobe.com", updatedUser.getEmail());
@@ -255,6 +255,9 @@ public class UserServiceTests {
         Assertions.assertEquals(DefaultUser.PHOTO_IMG, updatedUser.getPhotoImg());
         Assertions.assertEquals(DefaultUser.PROFESSION, updatedUser.getProfession());
         Assertions.assertEquals(DefaultUser.USERNAME, updatedUser.getUsername());
+        Assertions.assertEquals(DefaultUser.ARTICLE_MODULE, updatedUser.getFeatures().getArticleModule());
+        Assertions.assertEquals(DefaultUser.PLAN_MODULE, updatedUser.getFeatures().getPlanModule());
+        Assertions.assertEquals(DefaultUser.VOCABULARY_MODULE, updatedUser.getFeatures().getVocabularyModule());
     }
 
     @Test

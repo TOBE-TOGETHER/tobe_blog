@@ -26,6 +26,10 @@ public class DefaultTestData {
         public static final String BACKGROUND_IMG = "https://bg.com";
         public static final String PHOTO_IMG = "https://photo.com";
         public static final String PROFESSION = "Developer";
+        public static final Boolean ARTICLE_MODULE = true;
+        public static final Boolean PLAN_MODULE = false;
+        public static final Boolean VOCABULARY_MODULE = true;
+
     }
 
     public static Authentication getDefaultUserAuthentication() {
